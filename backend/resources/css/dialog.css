@@ -1,0 +1,40 @@
+.dialog{position:fixed;inset:0;margin:auto;width:min(760px,calc(100vw - 36px));max-width:none;max-height:min(92dvh,900px);padding:0;background:#fff;color:var(--ink);border:1px solid #d4e2d9;border-radius:14px;box-shadow:0 24px 90px #0c292755;overflow:visible}
+.dialog::backdrop{background:#102c30b8;backdrop-filter:blur(2px)}
+.dialog[open]{display:flex;flex-direction:column}
+.dialog-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex:none;padding:25px 28px 19px;border-bottom:1px solid #eaf0eb}
+.dialog-heading h2{font-size:23px;letter-spacing:-.03em;line-height:1.2;margin:7px 0 0}
+.dialog-close{flex:none;width:40px;height:40px}
+.dialog-content{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:23px 28px 26px;scrollbar-color:#b7c9c0 transparent;scrollbar-width:thin}
+.dialog-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:22px}
+.dialog-actions .danger-button{margin-right:auto}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px 22px}
+.detail-grid>div{border-bottom:1px solid #edf1ed;padding-bottom:12px;min-width:0}
+.detail-grid small,.detail-grid strong{display:block}
+.detail-grid small,.attributes small{font-size:10px;color:#869891;text-transform:uppercase;letter-spacing:.08em}
+.detail-grid strong{font-size:12px;margin-top:4px;line-height:1.5;overflow-wrap:anywhere}
+.attributes{margin-top:20px}
+.attributes pre{background:#f5f8f5;border:1px solid #e2eae3;padding:12px;border-radius:7px;font-size:11px;overflow:auto;color:#41645a}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid label{display:grid;gap:6px;font-size:11px;color:#536a66;font-weight:700}
+.form-grid input,.form-grid textarea{width:100%;min-height:39px;background:#fcfdfb;color:#2b4343;border:1px solid #d5e1d8;border-radius:7px;padding:9px 10px;font-size:12px}
+.form-grid textarea{resize:vertical}
+.postal-code-field{align-content:start}
+.postal-lookup-message{font-size:10px;line-height:1.4;font-weight:500;color:#47756d}
+.postal-lookup-message.is-error{color:#a84e38}
+.form-section,.full-width{grid-column:1/-1}
+.form-section{font-size:10px;color:#117568;letter-spacing:.1em;font-weight:800;border-top:1px solid #e5eee8;padding-top:17px;margin-top:8px}
+.dialog-error{margin:0 0 15px}
+.select-menu{position:relative;min-width:0}
+.form-grid .select-menu{display:grid;align-content:start;gap:6px}
+.select-label{font-size:11px;color:#536a66;font-weight:700}
+.select-trigger{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:39px;background:#fcfdfb;color:#2b4343;border:1px solid #d5e1d8;border-radius:7px;padding:9px 11px;text-align:left;font-size:12px;font-weight:600}
+.select-trigger:hover{border-color:#95bbae;background:#f9fcf9}
+.select-trigger svg{flex:none;color:#577a74;transition:transform .15s ease}
+.is-open .select-trigger{border-color:#43a58e;box-shadow:0 0 0 3px #43a58e23}
+.is-open .select-trigger svg{transform:rotate(180deg)}
+.select-options{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:30;margin:0;padding:5px;max-height:210px;overflow-y:auto;list-style:none;background:#fff;border:1px solid #d3e3d9;border-radius:9px;box-shadow:0 13px 28px #193f3230}
+.drop-up .select-options{top:auto;bottom:calc(100% + 5px)}
+.select-option{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:36px;padding:8px 10px;border-radius:5px;color:#3f5856;font-size:12px;cursor:pointer}
+.select-option.is-active,.select-option:hover{background:#eaf5ee;color:#0e6e60}
+.select-option[aria-selected=true]{font-weight:750}
+.select-option svg{color:#14836e;flex:none}

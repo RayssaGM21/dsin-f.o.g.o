@@ -1,0 +1,69 @@
+/* Keep workspace controls visible where the content can scroll without losing context. */
+@media (min-width:1101px) and (min-height:720px){
+  .main-map,.main-inventory{height:100dvh;min-height:0;overflow:hidden;display:flex;flex-direction:column;max-width:none;padding:18px clamp(20px,2.2vw,34px) 16px}
+  .main-overview{min-height:100dvh;height:auto;max-width:none;padding:24px clamp(24px,2.8vw,48px) 34px}
+  .main-overview .topbar,.main-map .topbar,.main-inventory .topbar{flex:none;margin-bottom:13px;padding-bottom:13px}
+  .main-overview .topbar h1,.main-map .topbar h1,.main-inventory .topbar h1{font-size:26px;margin-top:6px}
+  .main-overview .error,.main-map .error,.main-inventory .error{flex:none;margin-bottom:8px}
+
+  .overview-dashboard{display:grid;gap:16px}
+  .overview-lead,.metrics{margin:0}
+  .overview-lead h2{font-size:22px;margin:7px 0 5px}
+  .metrics{grid-template-columns:minmax(220px,1.35fr) repeat(3,minmax(0,1fr));gap:13px}
+  .metric{height:122px;min-height:0;padding:16px 19px}
+  .metric strong{font-size:30px;margin:auto 0 6px}
+  .metric-featured .featured-value{font-size:39px;margin:auto 0 3px}
+  .metric-featured .availability-track{margin-top:10px}
+  .content-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(340px,.8fr);gap:16px;align-items:stretch}
+  .map-panel{display:flex;flex-direction:column}
+  .map-panel .map{height:clamp(320px,35dvh,440px);margin:0 14px}
+  .map-panel .filter-row{padding-bottom:13px}
+  .map-marker-legend-compact{padding:12px 15px;gap:7px 16px}
+  .side-stack{display:grid;grid-template-columns:1fr;grid-template-rows:1fr 1fr;gap:16px}
+  .side-stack .panel{min-height:0}
+  .side-stack .list{padding:0 17px 10px;overflow:visible}
+  .side-stack .list-item{padding:11px 3px}
+  .side-stack .panel-heading{padding:18px 19px 13px}
+  .side-stack .panel-heading p{display:block}
+  .region-panel{margin:0}
+  .region-panel .panel-heading{padding:16px 20px 9px}
+  .region-list{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;padding:0 20px 17px}
+  .region-row{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:'name value' 'count down' 'bar bar';gap:5px 8px;padding:11px 12px;border:1px solid #e7eee8;border-radius:8px;background:#fbfdfb}
+  .region-row strong{grid-area:name;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .region-row span{grid-area:count}.region-row b{grid-area:value}.region-row small{grid-area:down;text-align:right}
+  .region-row .region-bar{grid-area:bar}
+
+  .inventory-workspace,.map-workspace{flex:1;min-height:0;display:flex;flex-direction:column}
+  .inventory-workspace .page-intro{flex:none;margin-bottom:13px}
+  .inventory-workspace .page-intro h2{font-size:21px;margin:4px 0}
+  .inventory-tabs{flex:none;margin-bottom:10px}
+  .inventory-tabs .tab{padding-bottom:8px}
+  .inventory-panel{flex:1;min-height:0;display:flex;flex-direction:column}
+  .inventory-toolbar{flex:none;padding:12px 16px}
+  .results-line{flex:none;padding:0 16px 9px}
+  .inventory-panel .table-wrap{flex:1;min-height:0;overflow:auto;scrollbar-width:thin}
+  .inventory-panel th{position:sticky;top:0;z-index:1;padding:10px 15px}
+  .inventory-panel td{padding:10px 15px}
+  .inventory-panel .pagination{flex:none;padding:9px 16px}
+  .inventory-panel .empty-state{flex:1;align-content:center}
+
+
+  .map-workspace-intro{flex:none;margin-bottom:10px}
+  .map-workspace-intro h2{font-size:20px;margin:4px 0 3px}
+  .map-workspace-stage{flex:1;min-height:0;height:auto}
+  .map-workspace-stage .map-list-panel,.map-workspace-stage .map-inspector{bottom:13px}
+  .map-workspace>.map-marker-legend{flex:none;margin-top:8px;padding:8px 11px;gap:5px 15px}
+  .map-workspace>.map-marker-legend .map-marker-legend-group{display:flex;align-items:center;gap:8px}
+  .map-workspace>.map-marker-legend .map-marker-legend-item{font-size:9px}
+  .map-workspace>.map-marker-legend .map-marker-legend-item svg{width:15px;height:15px}
+}
+
+@media (min-width:1101px) and (max-width:1450px) and (min-height:720px){
+  .region-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+@media (max-width:1100px), (max-height:719px){
+  .overview-dashboard,.inventory-workspace,.forecast-workspace{display:block}
+  .overview-dashboard .region-panel{margin:0}
+  .overview-dashboard .side-stack .region-panel{grid-column:1/-1}
+}

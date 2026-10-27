@@ -1,0 +1,10 @@
+:root{font-family:'Segoe UI Variable','Segoe UI',Arial,sans-serif;color:#20343a;background:#f4f6f3;font-synthesis:none}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-width:320px}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #31a691;outline-offset:2px}
+button:disabled{cursor:wait;opacity:.65}
+h1,h2,h3,p{margin-top:0}
+:root{--ink:#1d343a;--muted:#697d80;--subtle:#8a9999;--line:#dce4df;--surface:#fff;--canvas:#f4f6f3;--teal:#11796d;--teal-dark:#0d5e56;--navy:#132c32;--red:#a84e38;--amber:#9b6b26}

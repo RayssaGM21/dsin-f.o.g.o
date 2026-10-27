@@ -1,0 +1,362 @@
+.shell {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 236px minmax(0, 1fr)
+}
+
+.sidebar {
+    background: #142c32;
+    color: #e6efea;
+    min-height: 100vh;
+    padding: 31px 15px 22px;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 11px 44px
+}
+
+.brand-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 43px;
+    height: 43px;
+    color: #143c3c;
+    border-radius: 11px;
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -4px;
+    padding-right: 4px
+}
+
+.brand-mark span {
+    color: #13a083
+}
+
+.brand strong,
+.brand small {
+    display: block
+}
+
+.brand strong {
+    font-size: 17px;
+    letter-spacing: .065em
+}
+
+.brand small {
+    color: #91aba9;
+    font-size: 9px;
+    letter-spacing: .14em;
+    font-weight: 700;
+    margin-top: 3px
+}
+
+.sidebar-label,
+.eyebrow,
+.panel-kicker,
+.kicker {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .14em
+}
+
+.sidebar-label {
+    color: #73918f;
+    padding: 0 13px;
+    margin-bottom: 13px
+}
+
+.sidebar nav {
+    display: grid;
+    gap: 3px
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    width: 100%;
+    min-height: 45px;
+    border: 0;
+    border-radius: 8px;
+    padding: 0 14px;
+    background: transparent;
+    color: #a6bdba;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 650
+}
+
+.nav-item:hover {
+    background: #1d3b40;
+    color: #fff
+}
+
+.nav-item.active {
+    background: #28534f;
+    color: #ecfff7;
+    box-shadow: inset 3px 0 #6fc9ac
+}
+
+.nav-item svg {
+    flex: none
+}
+
+.sidebar-bottom {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: auto;
+    border-top: 1px solid #305056;
+    padding: 20px 9px 0
+}
+
+.sidebar-bottom strong,
+.sidebar-bottom small {
+    display: block
+}
+
+.sidebar-bottom strong {
+    font-size: 11px;
+    font-weight: 650
+}
+
+.sidebar-bottom small {
+    color: #89a6a4;
+    line-height: 1.5;
+    font-size: 10px;
+    margin-top: 3px
+}
+
+.live-dot {
+    display: inline-block;
+    flex: none;
+    width: 7px;
+    height: 7px;
+    background: #4dbf93;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px #4dbf9320
+}
+
+.sidebar-bottom .live-dot {
+    margin-top: 4px
+}
+
+.main {
+    min-width: 0;
+    width: 100%;
+    max-width: 1760px;
+    margin: 0 auto;
+    padding: 35px clamp(24px, 3.5vw, 62px) 72px
+}
+
+.topbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 28px
+}
+
+.eyebrow {
+    color: #718784
+}
+
+.eyebrow span {
+    margin: 0 7px;
+    color: #afbeb9
+}
+
+.topbar h1 {
+    color: var(--ink);
+    font-size: clamp(25px, 2.25vw, 33px);
+    letter-spacing: -.035em;
+    line-height: 1.15;
+    margin: 9px 0 0;
+    font-weight: 750
+}
+
+.top-actions {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    color: var(--muted);
+    font-size: 11px
+}
+
+.icon-button {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: #315b59;
+    border-radius: 9px
+}
+
+.icon-button:hover {
+    background: #ebf5f1;
+    border-color: #9ccbc0
+}
+
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    min-width: 0;
+    box-shadow: 0 4px 18px #1a3f3110
+}
+
+.panel-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 24px 17px
+}
+
+.panel-kicker {
+    color: #4d8981
+}
+
+.panel-heading h3 {
+    font-size: 17px;
+    letter-spacing: -.025em;
+    margin: 5px 0 4px;
+    color: var(--ink)
+}
+
+.panel-heading p,
+.page-intro p {
+    color: var(--muted);
+    font-size: 12px;
+    margin: 0;
+    line-height: 1.5
+}
+
+.page-intro {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 22px;
+    margin-bottom: 26px
+}
+
+.page-intro h2 {
+    font-size: 24px;
+    letter-spacing: -.03em;
+    margin: 7px 0 7px;
+    line-height: 1.2
+}
+
+.button-group {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap
+}
+
+.primary-button,
+.secondary-button,
+.danger-button {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border-radius: 7px;
+    padding: 9px 13px;
+    font-size: 12px;
+    font-weight: 700
+}
+
+.primary-button {
+    background: #116f64;
+    color: #fff;
+    border: 1px solid #116f64
+}
+
+.primary-button:hover {
+    background: #0b5b52
+}
+
+.secondary-button {
+    background: #fff;
+    color: #315654;
+    border: 1px solid #cad9d2
+}
+
+.secondary-button:hover {
+    background: #ecf5f0
+}
+
+.danger-button {
+    background: #fff6f3;
+    color: #a84732;
+    border: 1px solid #eccbc1
+}
+
+.danger-button:hover {
+    background: #ffe9e2
+}
+
+.text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #0d7368;
+    background: transparent;
+    border: 0;
+    font-weight: 750;
+    font-size: 12px;
+    padding: 8px 0;
+    text-decoration: none;
+    white-space: nowrap
+}
+
+.text-link:hover {
+    text-decoration: underline
+}
+
+.error {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #fff1ed;
+    color: #963f30;
+    border: 1px solid #ebc7bc;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    font-size: 12px
+}
+
+.error button {
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: inherit
+}
+
+.empty,
+.loading {
+    color: var(--muted);
+    font-size: 12px;
+    padding: 18px
+}
+
+.loading {
+    min-height: 200px
+}
