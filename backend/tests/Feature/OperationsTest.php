@@ -97,6 +97,21 @@ class OperationsTest extends TestCase
             ->assertJsonPath('regions.0.risk_index', 24);
     }
 
+    public function test_demonstration_history_exposes_the_recent_increase_and_backtest(): void
+    {
+        $this->seed();
+
+        $forecast = $this->getJson('/api/forecast')->assertOk();
+        $centro = collect($forecast->json('regions'))->firstWhere('neighborhood', 'Centro');
+
+        $this->assertSame('increase', $centro['signal']);
+        $this->assertSame(28, $centro['observed_days_28d']);
+        $this->assertSame(5, $centro['alerts_24h']);
+        $this->assertSame(1, $centro['baseline_alerts_per_day']);
+        $this->assertSame(3, $centro['expected_alerts_next_24h']);
+        $this->assertSame(0, $centro['backtest_mae']);
+    }
+
     public function test_agent_lifecycle(): void
     {
         $payload = [

@@ -5,11 +5,12 @@ namespace App\Services;
 use App\Models\Agent;
 use App\Models\Equipment;
 use App\Models\TelemetryEvent;
-use Illuminate\Support\Carbon;
 
 class OperationsService
 {
     private const UNAVAILABLE = ['malfunction', 'maintenance', 'disabled', 'stolen'];
+
+    public function __construct(private readonly TemporalForecast $temporalForecast) {}
 
     public function dashboard(): array
     {
@@ -60,56 +61,78 @@ class OperationsService
 
     public function forecast(): array
     {
+        $asOf = now();
         $groups = [];
         foreach (Equipment::all() as $item) {
             $name = $item->location['neighborhood'];
-            $groups[$name] ??= ['weighted' => 0, 'alerts' => 0, 'events' => 0, 'unavailable' => 0, 'agents' => 0];
+            $groups[$name] ??= ['weighted' => 0, 'events' => 0, 'unavailable' => 0, 'agents' => 0, 'history' => $this->temporalForecast->emptyHistory()];
             $groups[$name]['unavailable'] += (int) in_array($item->status, self::UNAVAILABLE, true);
         }
         foreach (Agent::all() as $agent) {
             $name = $agent->location['neighborhood'];
-            $groups[$name] ??= ['weighted' => 0, 'alerts' => 0, 'events' => 0, 'unavailable' => 0, 'agents' => 0];
+            $groups[$name] ??= ['weighted' => 0, 'events' => 0, 'unavailable' => 0, 'agents' => 0, 'history' => $this->temporalForecast->emptyHistory()];
             $groups[$name]['agents'] += (int) ($agent->status === 'active');
         }
-        $events = TelemetryEvent::with('equipment')->where('occurred_at', '>=', now()->subDays(7))
-            ->latest('occurred_at')->limit(5000)->get();
-        foreach ($events as $event) {
-            $name = $event->equipment->location['neighborhood'];
-            $groups[$name]['events']++;
-            $groups[$name]['alerts'] += (int) ($event->severity !== 'info');
-            $groups[$name]['weighted'] += match ($event->severity) {
-                'critical' => 3, 'warning' => 1, default => 0
-            };
-        }
+        TelemetryEvent::with('equipment')->where('occurred_at', '>=', $asOf->copy()->subDays(28))
+            ->where('occurred_at', '<=', $asOf)->orderBy('id')->chunkById(500, function ($events) use (&$groups, $asOf): void {
+                foreach ($events as $event) {
+                    $name = $event->equipment->location['neighborhood'];
+                    if (! isset($groups[$name])) {
+                        continue;
+                    }
+                    $this->temporalForecast->record($groups[$name]['history'], $event, $asOf);
+                    if ($event->occurred_at->lt($asOf->copy()->subDays(7))) {
+                        continue;
+                    }
+                    $groups[$name]['events']++;
+                    $groups[$name]['weighted'] += match ($event->severity) {
+                        'critical' => 3, 'warning' => 1, default => 0
+                    };
+                }
+            });
         $regions = [];
         foreach ($groups as $name => $group) {
+            $temporal = $this->temporalForecast->analyze($group['history']);
             $score = max(0, min(100, $group['weighted'] * 4 + $group['unavailable'] * 12 - $group['agents'] * 3));
             $level = $score >= 60 ? 'alto' : ($score >= 30 ? 'moderado' : 'baixo');
             $regions[] = [
                 'neighborhood' => $name,
                 'risk_index' => $score,
                 'level' => $level,
-                'expected_alerts_next_24h' => round($group['alerts'] / 7, 2),
+                ...$temporal,
                 'events_7d' => $group['events'],
                 'unavailable_equipment' => $group['unavailable'],
                 'active_agents' => $group['agents'],
-                'evidence' => "{$group['events']} eventos em 7 dias; {$group['unavailable']} equipamentos indisponíveis; {$group['agents']} agentes ativos.",
-                'recommendation' => match ($level) {
-                    'alto' => 'Priorizar inspeção e reforçar equipe nesta região.',
-                    'moderado' => 'Revisar alertas recentes e planejar manutenção preventiva.',
-                    default => 'Manter monitoramento e rotina de manutenção.',
-                },
+                'evidence' => $this->evidence($group['events'], $temporal['alerts_24h'], $group['unavailable'], $group['agents']),
+                'recommendation' => $temporal['signal'] === 'increase'
+                    ? 'Investigar o aumento de alertas e conferir os recursos no mapa.'
+                    : match ($level) {
+                        'alto' => 'Priorizar inspeção e reforçar equipe nesta região.',
+                        'moderado' => 'Revisar alertas recentes e planejar manutenção preventiva.',
+                        default => 'Manter monitoramento e rotina de manutenção.',
+                    },
             ];
         }
         usort($regions, fn ($a, $b) => $b['risk_index'] <=> $a['risk_index']);
 
         return [
-            'generated_at' => Carbon::now()->toIso8601String(),
-            'method' => 'Média diária de alertas dos últimos 7 dias. Índice heurístico: 4 × severidade ponderada (crítico=3, aviso=1) + 12 × indisponíveis − 3 × agentes ativos, limitado a 0–100.',
+            'generated_at' => $asOf->toIso8601String(),
+            'method' => 'Estimativa de 24h: média entre alertas das últimas 24h e média diária dos 7 dias anteriores, disponível com telemetria em pelo menos 5 desses 7 dias e 3 alertas. Pico: ao menos 3 alertas e aumento de 80% ou 2 alertas sobre a base. Erro histórico: média absoluta de 20 previsões retrospectivas com a mesma fórmula, exibida com pelo menos 21 dias de telemetria e 10 alertas no histórico. Índice de prioridade: 4 × severidade ponderada (crítico=3, aviso=1) + 12 × indisponíveis − 3 × agentes ativos, limitado a 0–100.',
             'limitations' => config('fogo.mode') === 'clean'
                 ? 'Índice operacional, não é probabilidade nem previsão causal. Sem telemetria suficiente, a leitura de risco é preliminar.'
                 : 'Índice operacional, não é probabilidade nem previsão causal. Dados de demonstração são sintéticos; amostras pequenas reduzem a confiabilidade.',
             'regions' => $regions,
         ];
+    }
+
+    private function evidence(int $events, int $alerts, int $unavailable, int $agents): string
+    {
+        return sprintf(
+            '%d %s em 7 dias; %d %s nas últimas 24 horas; %d %s; %d %s.',
+            $events, $events === 1 ? 'evento' : 'eventos',
+            $alerts, $alerts === 1 ? 'alerta' : 'alertas',
+            $unavailable, $unavailable === 1 ? 'equipamento indisponível' : 'equipamentos indisponíveis',
+            $agents, $agents === 1 ? 'agente ativo' : 'agentes ativos',
+        );
     }
 }

@@ -50,8 +50,9 @@ class DatabaseSeeder extends Seeder
             ['Totem de estacionamento', 'planned', 'none', 4, 'Mobilidade', ['payment' => ['PIX']]],
             ['Câmera de videomonitoramento', 'stolen', 'immediate', 4, 'Guarda Municipal', ['night_vision' => true]],
         ];
+        $devicesByArea = [];
         foreach ($specs as $index => [$type, $status, $priority, $area, $agency, $attributes]) {
-            Equipment::create([
+            $device = Equipment::create([
                 'type' => $type, 'serial_number' => sprintf('FOGO-%04d', $index + 1),
                 'brand' => 'Civitas', 'model' => 'Urban '.(2020 + $index % 5),
                 'agency' => $agency, 'status' => $status,
@@ -60,6 +61,7 @@ class DatabaseSeeder extends Seeder
                 'location' => $location($area, ($index % 3 - 1) * .0015),
                 'attributes' => $attributes,
             ]);
+            $devicesByArea[$area][] = $device->id;
         }
         $people = [
             ['Marina Costa', 'Agente de trânsito', 'Mobilidade', 'active', 0],
@@ -72,17 +74,30 @@ class DatabaseSeeder extends Seeder
         foreach ($people as $index => [$name, $role, $agency, $status, $area]) {
             Agent::create(compact('name', 'role', 'agency', 'status') + ['location' => $location($area, .002 + $index * .0003)]);
         }
-        foreach (range(0, 27) as $index) {
-            $severity = $index % 5 === 0 ? 'critical' : ($index % 3 === 0 ? 'info' : 'warning');
+        // Four weeks of synthetic heartbeats make telemetry coverage explicit.
+        // Centro receives a recent alert burst so the demo exposes the signal.
+        for ($day = 0; $day < 28; $day++) {
+            foreach ($devicesByArea as $area => $deviceIds) {
+                TelemetryEvent::create([
+                    'equipment_id' => $deviceIds[0], 'kind' => 'device_health',
+                    'severity' => 'info', 'description' => 'Leitura periódica recebida',
+                    'occurred_at' => now()->subDays($day)->subHours(2),
+                ]);
+
+                if ($area === 0 || ($area === 1 && $day % 2 === 0) || ($area === 4 && $day % 3 === 0)) {
+                    TelemetryEvent::create([
+                        'equipment_id' => $deviceIds[0], 'kind' => 'device_health',
+                        'severity' => 'warning', 'description' => 'Oscilação no sinal do dispositivo',
+                        'occurred_at' => now()->subDays($day)->subHours(3),
+                    ]);
+                }
+            }
+        }
+        for ($index = 0; $index < 4; $index++) {
             TelemetryEvent::create([
-                'equipment_id' => [3, 5, 8, 12, 2, 6, 9][$index % 7],
-                'kind' => 'device_health', 'severity' => $severity,
-                'description' => match ($severity) {
-                    'critical' => 'Falha de comunicação detectada',
-                    'warning' => 'Oscilação no sinal do dispositivo',
-                    default => 'Leitura periódica recebida',
-                },
-                'occurred_at' => now()->subHours($index * 5 + 1),
+                'equipment_id' => $devicesByArea[0][0], 'kind' => 'device_health',
+                'severity' => 'critical', 'description' => 'Falha de comunicação detectada',
+                'occurred_at' => now()->subMinutes(20 + $index * 15),
             ]);
         }
     }
